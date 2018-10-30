@@ -28,10 +28,10 @@ x3 = P.dot(np.hstack((X3, 1)))
 x4 = P.dot(np.hstack((X4, 1)))
 
 # Durch den letzten Wert teilen ([:2) -> entfernt den letzten Wert aus der liste)
-x1 = x1[:2] / x1[2]
-x2 = x2[:2] / x2[2]
-x3 = x3[:2] / x3[2]
-x4 = x4[:2] / x4[2]
+x1 = np.floor(x1[:2] / x1[2])
+x2 = np.floor(x2[:2] / x2[2])
+x3 = np.floor(x3[:2] / x3[2])
+x4 = np.floor(x4[:2] / x4[2])
 
 print(x1)
 print(x2)
@@ -41,6 +41,13 @@ print(x4)
 points3D = np.array([X1, X2 ,X3, X4])
 points2D, jacobian = cv2.projectPoints(points3D, R, t, K, np.array([], dtype=float))
 
-print(points2D)
-#?
-print(jacobian)
+print(np.floor(points2D))
+
+#Liegen alle Pixel im Bild? 
+#- Pixel (412, -220) liegt nicht im Bild.
+
+#Was fällt bei den Bildpunkten von X1 und X3 auf?
+#- Beide 3D Punkte liegen auf dem gleichen Strahl und werden somit auf den gleichen 2D Punkt 
+#(366. 286)  projeziert.
+
+
