@@ -15,7 +15,7 @@ for path in image_pathes:
     # 1. Kalibrierungsbilder einlesen
     image = cv2.imread(path)
     gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
-    ret_val, corners = cv2.findChessboardCorners(gray, (9, 6), None)
+    ret_val, corners = cv2.findChessboardCorners(gray, (9, 6))
     # 2. Wurde Muster gefunden?
     if ret_val:
         # hinzufügen der Bildpunkte und korrespondierende 3D Punkte wenn Muster erkannt
@@ -30,17 +30,18 @@ for path in image_pathes:
 cv2.destroyAllWindows()
 
 # 4. Kamera Kalibrierung
-ret, cM, dC, rVecs, tVecs = cv2.calibrateCamera(objectPoints, imagePoints, (9, 6), None, None)
+ret, cM, dC, rVecs, tVecs = cv2.calibrateCamera(objectPoints, imagePoints, gray.shape, None, None)
 print(cM)
+#cM = np.rint(cM)
 
 """5. Die 3D Punkte der Schachbrettecken mit Hilfe der bestimmten Kameraparameter 
 zurück ins Bild projiziert und anzeigt"""
-def project_points(points_3d, cameraMatrix, distCoeffs, rvecs, tvecs, imageSize):
+def project_points(points_3d, cameraMatrix, distCoeffs, rvecs, tvecs, patternSize):
     i = 0
     for path in image_pathes:
         im = cv2.imread(path)
         points_2d, jacobian = cv2.projectPoints(points_3d, rvecs[i], tvecs[i], cameraMatrix, distCoeffs)
-        im = cv2.drawChessboardCorners(im, imageSize, points_2d, True)
+        im = cv2.drawChessboardCorners(im, patternSize, points_2d, True)
         cv2.imshow('Chessboard corners', im)
         cv2.waitKey(500)
         i = i + 1
